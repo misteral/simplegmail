@@ -121,7 +121,67 @@ class Gmail(object):
 
         return self._service
 
-# TODO: appply reply_message
+    def reply_message(
+        self,
+        sender: str,
+        to: str,
+        subject: str = '',
+        msg_html: Optional[str] = None,
+        msg_plain: Optional[str] = None,
+        cc: Optional[List[str]] = None,
+        bcc: Optional[List[str]] = None,
+        attachments: Optional[List[str]] = None,
+        signature: bool = False,
+        user_id: str = 'me',
+        thread_id: Optional[str] = None,
+        in_reply_to: Optional[str] = None,
+        references: Optional[str] = None
+    ) -> Message:
+        """
+        Replies to an email.
+
+        Args:
+            sender: The email address the message is being sent from.
+            to: The email address the message is being sent to.
+            subject: The subject line of the email.
+            msg_html: The HTML message of the email.
+            msg_plain: The plain text alternate message of the email. This is
+                often displayed on slow or old browsers, or if the HTML message
+                is not provided.
+            cc: The list of email addresses to be cc'd.
+            bcc: The list of email addresses to be bcc'd.
+            attachments: The list of attachment file names.
+            signature: Whether the account signature should be added to the
+                message.
+            user_id: The address of the sending account. 'me' for the
+                default address associated with the account.
+            thread_id: The thread ID of the email being replied to.
+            in_reply_to: The message ID of the email being replied to.
+            references: The references header of the email being replied to.
+
+        Returns:
+            The Message object representing the sent message.
+
+        Raises:
+            googleapiclient.errors.HttpError: There was an error executing the
+                HTTP request.
+
+        """
+
+        msg = self._create_message(
+            sender, to, subject, msg_html, msg_plain, cc=cc, bcc=bcc,
+            attachments=attachments, signature=signature, user_id=user_id,
+            thread_id=thread_id, in_reply_to=in_reply_to, references=references
+        )
+
+        try:
+            req = self.service.users().messages().send(userId='me', body=msg)
+            res = req.execute()
+            return self._build_message_from_ref(user_id, res, 'reference')
+
+        except HttpError as error:
+            # Pass along the error
+            raise error
 
     def send_message(
         self,
@@ -946,7 +1006,10 @@ class Gmail(object):
         bcc: List[str] = None,
         attachments: List[str] = None,
         signature: bool = False,
-        user_id: str = 'me'
+        user_id: str = 'me',
+        thread_id: Optional[str] = None,
+        in_reply_to: Optional[str] = None,
+        references: Optional[str] = None
     ) -> dict:
         """
         Creates the raw email message to be sent.
@@ -964,6 +1027,9 @@ class Gmail(object):
             signature: Whether the account signature should be added to the
                 message. Will add the signature to your HTML message only, or a
                 create a HTML message if none exists.
+            thread_id: The thread ID of the email being replied to.
+            in_reply_to: The message ID of the email being replied to.
+            references: The references header of the email being replied to.
 
         Returns:
             The message dict.
@@ -980,6 +1046,14 @@ class Gmail(object):
 
         if bcc:
             msg['Bcc'] = ', '.join(bcc)
+        if thread_id:
+            msg['Thread-Id'] = thread_id
+
+        if in_reply_to:
+            msg['In-Reply-To'] = in_reply_to
+
+        if references:
+            msg['References'] = references
 
         if signature:
             m = re.match(r'.+\s<(?P<addr>.+@.+\..+)>', sender)
