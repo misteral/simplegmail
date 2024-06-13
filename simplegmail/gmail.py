@@ -121,6 +121,8 @@ class Gmail(object):
 
         return self._service
 
+# TODO: appply reply_message
+
     def send_message(
         self,
         sender: str,
