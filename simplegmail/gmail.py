@@ -1093,3 +1093,5 @@ class Gmail(object):
 
         res = req.execute()
         return res
+
+# get_thread_function
