@@ -1094,4 +1094,37 @@ class Gmail(object):
         res = req.execute()
         return res
 
-# get_thread_function
+    def get_thread_messages(
+        self,
+        thread_id: str,
+        user_id: str = 'me',
+        attachments: str = 'reference'
+    ) -> List[Message]:
+        """
+        Gets all messages with the specified thread_id.
+
+        Args:
+            thread_id: The thread ID to match.
+            user_id: The user's email address. By default, the authenticated user.
+            attachments: Accepted values are 'ignore' which completely ignores all attachments,
+                         'reference' which includes attachment information but does not download the data,
+                         and 'download' which downloads the attachment data to store locally. Default 'reference'.
+
+        Returns:
+            A list of Message objects.
+
+        Raises:
+            googleapiclient.errors.HttpError: There was an error executing the HTTP request.
+        """
+        try:
+            response = self.service.users().threads().get(
+                userId=user_id,
+                id=thread_id
+            ).execute()
+
+            message_refs = response.get('messages', [])
+            return self._get_messages_from_refs(user_id, message_refs, attachments)
+
+        except HttpError as error:
+            # Pass along the error
+            raise error
