@@ -127,7 +127,9 @@ class Gmail(object):
         reply_text: str,
         msg_html: Optional[str] = None,
         msg_plain: Optional[str] = None,
-        signature: bool = False
+        signature: bool = False,
+        attachments: Optional[List[str]] = None,
+        user_id: str = 'me'
     ) -> Message:
         """
         Replies to an email.
@@ -151,19 +153,19 @@ class Gmail(object):
         original_msg_html = message.html or ""
         original_msg_plain = message.plain or ""
 
-        if msg_html:
-            msg_html += f"<br><br>On {message.date}, {message.sender} wrote:<br>{original_msg_html}"
-        if msg_plain:
-            msg_plain += f"\n\nOn {message.date}, {message.sender} wrote:\n{original_msg_plain}"
+        if not msg_html:
+            msg_html = reply_text + f"<br><br>On {message.date}, {message.sender} wrote:<br>{original_msg_html}"
+        if not msg_plain:
+            msg_plain = reply_text + f"\n\nOn {message.date}, {message.sender} wrote:\n{original_msg_plain}"
 
         msg = self._create_message(
             message.recipient, message.sender, f"Re: {message.subject}", msg_html, msg_plain,
-            signature=signature, user_id=message.user_id, thread_id=message.thread_id,
-            in_reply_to=message.id, references=message.headers.get('References')
+            signature=signature, user_id=user_id, attachments=attachments, thread_id=message.thread_id,
+            in_reply_to=message.id, references=message.id
         )
 
         try:
-            req = self.service.users().messages().send(userId=message.user_id, body=msg)
+            req = self.service.users().messages().send(userId='me', body=msg)
             res = req.execute()
             return self._build_message_from_ref(user_id, res, 'reference')
 
