@@ -123,41 +123,21 @@ class Gmail(object):
 
     def reply_message(
         self,
-        sender: str,
-        to: str,
-        subject: str = '',
+        message: Message,
+        reply_text: str,
         msg_html: Optional[str] = None,
         msg_plain: Optional[str] = None,
-        cc: Optional[List[str]] = None,
-        bcc: Optional[List[str]] = None,
-        attachments: Optional[List[str]] = None,
-        signature: bool = False,
-        user_id: str = 'me',
-        thread_id: Optional[str] = None,
-        in_reply_to: Optional[str] = None,
-        references: Optional[str] = None
+        signature: bool = False
     ) -> Message:
         """
         Replies to an email.
 
         Args:
-            sender: The email address the message is being sent from.
-            to: The email address the message is being sent to.
-            subject: The subject line of the email.
-            msg_html: The HTML message of the email.
-            msg_plain: The plain text alternate message of the email. This is
-                often displayed on slow or old browsers, or if the HTML message
-                is not provided.
-            cc: The list of email addresses to be cc'd.
-            bcc: The list of email addresses to be bcc'd.
-            attachments: The list of attachment file names.
-            signature: Whether the account signature should be added to the
-                message.
-            user_id: The address of the sending account. 'me' for the
-                default address associated with the account.
-            thread_id: The thread ID of the email being replied to.
-            in_reply_to: The message ID of the email being replied to.
-            references: The references header of the email being replied to.
+            message: The Message object representing the email being replied to.
+            reply_text: The text to include in the reply.
+            msg_html: The HTML message of the reply.
+            msg_plain: The plain text alternate message of the reply.
+            signature: Whether the account signature should be added to the reply.
 
         Returns:
             The Message object representing the sent message.
@@ -168,14 +148,22 @@ class Gmail(object):
 
         """
 
+        original_msg_html = message.html or ""
+        original_msg_plain = message.plain or ""
+
+        if msg_html:
+            msg_html += f"<br><br>On {message.date}, {message.sender} wrote:<br>{original_msg_html}"
+        if msg_plain:
+            msg_plain += f"\n\nOn {message.date}, {message.sender} wrote:\n{original_msg_plain}"
+
         msg = self._create_message(
-            sender, to, subject, msg_html, msg_plain, cc=cc, bcc=bcc,
-            attachments=attachments, signature=signature, user_id=user_id,
-            thread_id=thread_id, in_reply_to=in_reply_to, references=references
+            message.recipient, message.sender, f"Re: {message.subject}", msg_html, msg_plain,
+            signature=signature, user_id=message.user_id, thread_id=message.thread_id,
+            in_reply_to=message.id, references=message.headers.get('References')
         )
 
         try:
-            req = self.service.users().messages().send(userId='me', body=msg)
+            req = self.service.users().messages().send(userId=message.user_id, body=msg)
             res = req.execute()
             return self._build_message_from_ref(user_id, res, 'reference')
 
