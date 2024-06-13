@@ -158,11 +158,11 @@ class Gmail(object):
             msg_html = f"{reply_text} <br><br>On {message.date}, {message.sender} wrote:<br>{original_msg_html}"
         if not msg_plain:
             msg_plain = f"{reply_text} \n\nOn {message.date}, {message.sender} wrote:\n{original_msg_plain}"
-
+        references = message.headers.get('References') + " " + message.id
         msg = self._create_message(
             message.recipient, message.sender, f"Re: {message.subject}", msg_html, msg_plain,
             signature=signature, user_id=user_id, attachments=attachments, thread_id=message.thread_id,
-            in_reply_to=message.id, references=message.id
+            in_reply_to=message.id, references=references
         )
 
         try:
@@ -1072,9 +1072,12 @@ class Gmail(object):
 
             self._ready_message_with_attachments(msg, attachments)
 
-        return {
-            'raw': base64.urlsafe_b64encode(msg.as_string().encode()).decode()
-        }
+        result = {}
+        result['raw'] = base64.urlsafe_b64encode(msg.as_string().encode('utf-8')).decode('utf-8')
+        if thread_id:
+            result['threadId'] = thread_id
+
+        return result
 
     def _ready_message_with_attachments(
         self,
