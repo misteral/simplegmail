@@ -158,7 +158,7 @@ class Gmail(object):
             msg_html = f"{reply_text} <br><br>On {message.date}, {message.sender} wrote:<br>{original_msg_html}"
         if not msg_plain:
             msg_plain = f"{reply_text} \n\nOn {message.date}, {message.sender} wrote:\n{original_msg_plain}"
-        references = message.headers.get('References') + " " + message.id
+        references = message.id
         msg = self._create_message(
             message.recipient, message.sender, f"Re: {message.subject}", msg_html, msg_plain,
             signature=signature, user_id=user_id, attachments=attachments, thread_id=message.thread_id,
