@@ -1060,11 +1060,11 @@ class Gmail(object):
         attach_plain = MIMEMultipart('alternative') if attachments else msg
         attach_html = MIMEMultipart('related') if attachments else msg
 
-        if msg_plain:
-            attach_plain.attach(MIMEText(msg_plain, 'plain'))
-
         if msg_html:
-            attach_html.attach(MIMEText(msg_html, 'html'))
+            attach_html.attach(MIMEText(msg_html, 'html', 'utf-8'))
+
+        if msg_plain:
+            attach_plain.attach(MIMEText(msg_plain, 'plain', 'utf-8'))
 
         if attachments:
             attach_plain.attach(attach_html)
