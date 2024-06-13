@@ -139,6 +139,7 @@ class Gmail(object):
             reply_text: The text to include in the reply.
             msg_html: The HTML message of the reply.
             msg_plain: The plain text alternate message of the reply.
+            attachments: The list of attachment file names.
             signature: Whether the account signature should be added to the reply.
 
         Returns:
@@ -154,9 +155,9 @@ class Gmail(object):
         original_msg_plain = message.plain or ""
 
         if not msg_html:
-            msg_html = reply_text + f"<br><br>On {message.date}, {message.sender} wrote:<br>{original_msg_html}"
+            msg_html = f"{reply_text} <br><br>On {message.date}, {message.sender} wrote:<br>{original_msg_html}"
         if not msg_plain:
-            msg_plain = reply_text + f"\n\nOn {message.date}, {message.sender} wrote:\n{original_msg_plain}"
+            msg_plain = f"{reply_text} \n\nOn {message.date}, {message.sender} wrote:\n{original_msg_plain}"
 
         msg = self._create_message(
             message.recipient, message.sender, f"Re: {message.subject}", msg_html, msg_plain,
@@ -1037,6 +1038,7 @@ class Gmail(object):
         if bcc:
             msg['Bcc'] = ', '.join(bcc)
         if thread_id:
+            msg['threadId'] = thread_id
             msg['Thread-Id'] = thread_id
 
         if in_reply_to:
