@@ -160,7 +160,7 @@ class Gmail(object):
             msg_plain = f"{reply_text} \n\nOn {message.date}, {message.sender} wrote:\n{original_msg_plain}"
         references = message.id
         msg = self._create_message(
-            message.recipient, message.sender, f"Re: {message.subject}", msg_html, msg_plain,
+            message.recipient, message.sender, f"Re: {message.subject}", reply_text, reply_text,
             signature=signature, user_id=user_id, attachments=attachments, thread_id=message.thread_id,
             in_reply_to=message.id, references=references
         )
