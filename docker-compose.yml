@@ -1,0 +1,20 @@
+---
+services:
+  gmsa:
+    image: ghcr.io/mafrosis/gmsa:dev
+    restart: unless-stopped
+    build:
+      context: .
+    environment:
+      - TZ=Australia/Melbourne
+
+  test:
+    image: ghcr.io/mafrosis/gmsa:test
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    volumes:
+      - ./gmsa:/src/gmsa
+      - ./tests:/src/test
+    depends_on:
+      - gmsa

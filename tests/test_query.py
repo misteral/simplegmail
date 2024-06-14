@@ -1,4 +1,4 @@
-from simplegmail import query
+from gmsa import query
 
 class TestQuery(object):
 

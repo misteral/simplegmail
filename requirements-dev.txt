@@ -1,0 +1,8 @@
+google-api-python-client-stubs
+pylint
+pytest
+pytest-mypy
+pytest-sugar
+ipdb
+types-beautifulsoup4
+types-click

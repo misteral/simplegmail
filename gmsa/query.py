@@ -1,15 +1,8 @@
-"""
-File: query.py
---------------
-This module contains functions for constructing Gmail search queries.
-
-"""
-
 from typing import List, Union
 
 
 def construct_query(*query_dicts, **query_terms) -> str:
-    """
+    '''
     Constructs a query from either:
 
     (1) a list of dictionaries representing queries to "or" (only one of the
@@ -150,9 +143,7 @@ def construct_query(*query_dicts, **query_terms) -> str:
 
     Returns:
         The query string.
-
-    """
-
+    '''
     if query_dicts:
         return _or([construct_query(**query) for query in query_dicts])
 
@@ -193,17 +184,12 @@ def construct_query(*query_dicts, **query_terms) -> str:
 
 
 def _and(queries: List[str]) -> str:
-    """
+    '''
     Returns a query term matching the "and" of all query terms.
 
     Args:
         queries: A list of query terms to and.
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     if len(queries) == 1:
         return queries[0]
 
@@ -211,17 +197,12 @@ def _and(queries: List[str]) -> str:
 
 
 def _or(queries: List[str]) -> str:
-    """
+    '''
     Returns a query term matching the "or" of all query terms.
 
     Args:
         queries: A list of query terms to or.
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     if len(queries) == 1:
         return queries[0]
 
@@ -229,79 +210,53 @@ def _or(queries: List[str]) -> str:
 
 
 def _exclude(term: str) -> str:
-    """
+    '''
     Returns a query term excluding messages that match the given query term.
 
     Args:
         term: The query term to be excluded.
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     return f'-{term}'
 
 
 def _sender(sender: str) -> str:
-    """
+    '''
     Returns a query term matching "from".
 
     Args:
         sender: The sender of the message.
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     return f'from:{sender}'
 
 
 def _recipient(recipient: str) -> str:
-    """
+    '''
     Returns a query term matching "to".
 
     Args:
         recipient: The recipient of the message.
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     return f'to:{recipient}'
 
 
 def _subject(subject: str) -> str:
-    """
+    '''
     Returns a query term matching "subject".
 
     Args:
         subject: The subject of the message.
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     return f'subject:{subject}'
 
 
 def _labels(labels: Union[List[str], str]) -> str:
-    """
-    Returns a query term matching a multiple labels.
-
-    Works with a single label (str) passed in, instead of the expected list.
+    '''
+    Returns a query term matching a multiple labels. Works with a single label (str) passed in,
+    instead of the expected list.
 
     Args:
         labels: A list of labels the message must have applied.
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     if isinstance(labels, str):  # called the wrong function
         return _label(labels)
 
@@ -309,7 +264,7 @@ def _labels(labels: Union[List[str], str]) -> str:
 
 
 def _label(label: str) -> str:
-    """
+    '''
     Returns a query term matching a label.
 
     Args:
@@ -318,13 +273,13 @@ def _label(label: str) -> str:
     Returns:
         The query string.
 
-    """
+    '''
 
     return f'label:{label}'
 
 
 def _spec_attachment(name_or_type: str) -> str:
-    """
+    '''
     Returns a query term matching messages that have attachments with a
     certain name or file type.
 
@@ -334,13 +289,13 @@ def _spec_attachment(name_or_type: str) -> str:
     Returns:
         The query string.
 
-    """
+    '''
 
     return f'filename:{name_or_type}'
 
 
 def _exact_phrase(phrase: str) -> str:
-    """
+    '''
     Returns a query term matching messages that have an exact phrase.
 
     Args:
@@ -349,43 +304,43 @@ def _exact_phrase(phrase: str) -> str:
     Returns:
         The query string.
 
-    """
+    '''
 
     return f'"{phrase}"'
 
 
 def _starred() -> str:
-    """Returns a query term matching messages that are starred."""
+    '''Returns a query term matching messages that are starred.'''
 
     return 'is:starred'
 
 
 def _snoozed() -> str:
-    """Returns a query term matching messages that are snoozed."""
+    '''Returns a query term matching messages that are snoozed.'''
 
     return 'is:snoozed'
 
 
 def _unread() -> str:
-    """Returns a query term matching messages that are unread."""
+    '''Returns a query term matching messages that are unread.'''
 
     return 'is:unread'
 
 
 def _read() -> str:
-    """Returns a query term matching messages that are read."""
+    '''Returns a query term matching messages that are read.'''
 
     return 'is:read'
 
 
 def _important() -> str:
-    """Returns a query term matching messages that are important."""
+    '''Returns a query term matching messages that are important.'''
 
     return 'is:important'
 
 
 def _cc(recipient: str) -> str:
-    """
+    '''
     Returns a query term matching messages that have certain recipients in
     the cc field.
 
@@ -395,110 +350,73 @@ def _cc(recipient: str) -> str:
     Returns:
         The query string.
 
-    """
+    '''
 
     return f'cc:{recipient}'
 
 
 def _bcc(recipient: str) -> str:
-    """
-    Returns a query term matching messages that have certain recipients in
-    the bcc field.
+    '''
+    Returns a query term matching messages that have certain recipients in the bcc field.
 
     Args:
         recipient: The recipient in the bcc field to match.
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     return f'bcc:{recipient}'
 
 
 def _after(date: str) -> str:
-    """
+    '''
     Returns a query term matching messages sent after a given date.
 
     Args:
         date: The date messages must be sent after.
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     return f'after:{date}'
 
 
 def _before(date: str) -> str:
-    """
+    '''
     Returns a query term matching messages sent before a given date.
 
     Args:
         date: The date messages must be sent before.
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     return f'before:{date}'
 
 
 def _older_than(number: int, unit: str) -> str:
-    """
+    '''
     Returns a query term matching messages older than a time period.
 
     Args:
         number: The number of units of time of the period.
         unit: The unit of time: "day", "month", or "year".
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     return f'older_than:{number}{unit[0]}'
 
 
 def _newer_than(number: int, unit: str) -> str:
-    """
+    '''
     Returns a query term matching messages newer than a time period.
 
     Args:
         number: The number of units of time of the period.
         unit: The unit of time: 'day', 'month', or 'year'.
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     return f'newer_than:{number}{unit[0]}'
 
 
-def _near_words(
-    first: str,
-    second: str,
-    distance: int,
-    exact: bool = False
-) -> str:
-    """
-    Returns a query term matching messages that two words within a certain
-    distance of each other.
+def _near_words(first: str, second: str, distance: int, exact: bool = False) -> str:
+    '''
+    Returns a query term matching messages that two words within a certain distance of each other.
 
     Args:
         first: The first word to search for.
         second: The second word to search for.
         distance: How many words apart first and second can be.
         exact: Whether first must come before second [default False].
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     query = f'{first} AROUND {distance} {second}'
     if exact:
         query = '"' + query + '"'
@@ -507,164 +425,107 @@ def _near_words(
 
 
 def _attachment() -> str:
-    """Returns a query term matching messages that have attachments."""
-
+    'Returns a query term matching messages that have attachments.'
     return 'has:attachment'
 
 
 def _drive() -> str:
-    """
-    Returns a query term matching messages that have Google Drive attachments.
-
-    """
-
+    'Returns a query term matching messages that have Google Drive attachments.'
     return 'has:drive'
 
 
 def _docs() -> str:
-    """
+    '''
     Returns a query term matching messages that have Google Docs attachments.
-
-    """
-
+    '''
     return 'has:document'
 
 
 def _sheets() -> str:
-    """
-    Returns a query term matching messages that have Google Sheets attachments.
-
-    """
-
+    'Returns a query term matching messages that have Google Sheets attachments.'
     return 'has:spreadsheet'
 
 
 def _slides() -> str:
-    """
-    Returns a query term matching messages that have Google Slides attachments.
-
-    """
-
+    'Returns a query term matching messages that have Google Slides attachments.'
     return 'has:presentation'
 
 
 def _list(list_name: str) -> str:
-    """
+    '''
     Returns a query term matching messages from a mailing list.
 
     Args:
         list_name: The name of the mailing list.
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     return f'list:{list_name}'
 
 
 def _in(folder_name: str) -> str:
-    """
+    '''
     Returns a query term matching messages from a folder.
 
     Args:
         folder_name: The name of the folder.
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     return f'in:{folder_name}'
 
 
 def _delivered_to(address: str) -> str:
-    """
+    '''
     Returns a query term matching messages delivered to an address.
 
     Args:
         address: The email address the messages are delivered to.
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     return f'deliveredto:{address}'
 
 
 def _category(category: str) -> str:
-    """
+    '''
     Returns a query term matching messages belonging to a category.
 
     Args:
         category: The category the messages belong to.
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     return f'category:{category}'
 
 
 def _larger(size: str) -> str:
-    """
+    '''
     Returns a query term matching messages larger than a certain size.
 
     Args:
-        size: The minimum size of the messages in bytes. Suffixes are allowed,
-            e.g., "10M".
-
-    Returns:
-        The query string.
-
-    """
-
+        size: The minimum size of the messages in bytes. Suffixes are allowed, e.g., "10M".
+    '''
     return f'larger:{size}'
 
 
 def _smaller(size: str) -> str:
-    """
+    '''
     Returns a query term matching messages smaller than a certain size.
 
     Args:
-        size: The maximum size of the messages in bytes. Suffixes are allowed,
-            e.g., "10M".
-
-    Returns:
-        The query string.
-
-    """
-
+        size: The maximum size of the messages in bytes. Suffixes are allowed, e.g., "10M".
+    '''
     return f'smaller:{size}'
 
 
 def _id(message_id: str) -> str:
-    """
+    '''
     Returns a query term matching messages with the message ID.
 
     Args:
         message_id: The RFC822 message ID.
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     return f'rfc822msgid:{message_id}'
 
 
 def _has(attribute: str) -> str:
-    """
+    '''
     Returns a query term matching messages with an attribute.
 
     Args:
         attribute: The attribute of the messages. E.g., "nouserlabels".
-
-    Returns:
-        The query string.
-
-    """
-
+    '''
     return f'has:{attribute}'

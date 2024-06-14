@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools >= 40.6.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gmsa"
+description = "Google Mail Simple API"
+dynamic = ["version", "readme"]
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Natural Language :: English",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "beautifulsoup4>4",
+    "google-api-python-client>2,<3",
+    "google-auth-oauthlib>=0.5,<1.0",
+    "lxml>=4.4.2",
+]
+
+[project.scripts]
+gmsa = "gmsa.cli:cli"
+
+[tool.setuptools.packages.find]
+exclude = ["test*", "venv*"]
+
+[tool.setuptools.package-data]
+gmsa = ["*.txt", "*.md"]
+
+[tool.setuptools.dynamic]
+version = {attr = "gmsa.__version__"}
+readme = {file = ["README.md"]}
+
+[tool.distutils.bdist_wheel]
+universal = true
