@@ -176,6 +176,22 @@ class Message:
         '''
         self.modify_labels([], to_remove)
 
+    def _get_or_create_label_id(self, label_name: str) -> str:
+        'Gets the label ID for the given label name, creating the label if it does not exist.'
+        labels = self.service.users().labels().list(userId=self.user_id).execute().get('labels', [])
+        for label in labels:
+            if label['name'].lower() == label_name.lower():
+                return label['id']
+        
+        # Create the label if it doesn't exist
+        label = {
+            'name': label_name,
+            'labelListVisibility': 'labelShow',
+            'messageListVisibility': 'show'
+        }
+        created_label = self.service.users().labels().create(userId=self.user_id, body=label).execute()
+        return created_label['id']
+
     def modify_labels(self, to_add: Union[Label, str, List[Label], List[str]],
                       to_remove: Union[Label, str, List[Label], List[str]]):
         '''
@@ -195,10 +211,10 @@ class Message:
             'Creates an object for updating message label.'
             return {
                 'addLabelIds': [
-                    lbl.id if isinstance(lbl, Label) else lbl for lbl in to_add
+                    lbl.id if isinstance(lbl, Label) else self._get_or_create_label_id(lbl) for lbl in to_add
                 ],
                 'removeLabelIds': [
-                    lbl.id if isinstance(lbl, Label) else lbl for lbl in to_remove
+                    lbl.id if isinstance(lbl, Label) else self._get_or_create_label_id(lbl) for lbl in to_remove
                 ]
             }
 
