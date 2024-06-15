@@ -222,8 +222,8 @@ class Message:
             userId=self.user_id, id=self.id, body=create_update_labels()
         ).execute()
 
-        assert all((lbl in res['labelIds'] for lbl in to_add)) \
-            and all((lbl not in res['labelIds'] for lbl in to_remove)), \
+        assert all((lbl.id if isinstance(lbl, Label) else self._get_or_create_label_id(lbl) in res['labelIds'] for lbl in to_add)) \
+            and all((lbl.id if isinstance(lbl, Label) else self._get_or_create_label_id(lbl) not in res['labelIds'] for lbl in to_remove)), \
             'An error occurred while modifying message label.'
 
         self.label_ids = res['labelIds']
