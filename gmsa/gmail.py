@@ -468,20 +468,20 @@ class Gmail(AuthenticatedService):
 
             msg_html += "<br /><br />" + account_sig
 
-        attach_plain = MIMEMultipart('alternative') if attachments else msg
-        attach_html = MIMEMultipart('related') if attachments else msg
-
-        if msg_html:
-            attach_html.attach(MIMEText(msg_html, 'html', 'utf-8'))
+        # Create the alternative part for plain and HTML text
+        alternative_part = MIMEMultipart('alternative')
 
         if msg_plain:
-            attach_plain.attach(MIMEText(msg_plain, 'plain', 'utf-8'))
+            alternative_part.attach(MIMEText(msg_plain, 'plain', 'utf-8'))
+
+        if msg_html:
+            alternative_part.attach(MIMEText(msg_html, 'html', 'utf-8'))
 
         if attachments:
-            attach_plain.attach(attach_html)
-            msg.attach(attach_plain)
-
+            msg.attach(alternative_part)
             self._ready_message_with_attachments(msg, attachments)
+        else:
+            msg = alternative_part
 
         result = {}
         result['raw'] = base64.urlsafe_b64encode(msg.as_string().encode('utf-8')).decode('utf-8')
@@ -597,7 +597,7 @@ class Gmail(AuthenticatedService):
     def reply_message(
         self,
         message: Message,
-        reply_text: str,
+        reply_text: Optional[str] = None,
         msg_html: Optional[str] = None,
         msg_plain: Optional[str] = None,
         signature: bool = False,
