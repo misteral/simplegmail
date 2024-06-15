@@ -481,7 +481,7 @@ class Gmail(AuthenticatedService):
             msg.attach(alternative_part)
             self._ready_message_with_attachments(msg, attachments)
         else:
-            msg = alternative_part
+            msg.attach(alternative_part)
 
         result = {}
         result['raw'] = base64.urlsafe_b64encode(msg.as_string().encode('utf-8')).decode('utf-8')
