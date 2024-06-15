@@ -156,7 +156,10 @@ class Message:
         Args:
             to_add: The list of labels to add.
         '''
-        self.modify_labels(to_add, [])
+        existing_labels = self.service.users().messages().get(userId=self.user_id, id=self.id).execute().get('labelIds', [])
+        to_add = [label for label in to_add if (label.id if isinstance(label, Label) else self._get_or_create_label_id(label)) not in existing_labels]
+        if to_add:
+            self.modify_labels(to_add, [])
 
     def remove_label(self, to_remove: Union[Label, str]):
         '''
@@ -218,9 +221,16 @@ class Message:
                 ]
             }
 
-        res = self.service.users().messages().modify(
-            userId=self.user_id, id=self.id, body=create_update_labels()
-        ).execute()
+        if to_add or to_remove:
+            res = self.service.users().messages().modify(
+                userId=self.user_id, id=self.id, body=create_update_labels()
+            ).execute()
+
+            assert all((lbl.id if isinstance(lbl, Label) else self._get_or_create_label_id(lbl) in res['labelIds'] for lbl in to_add)) \
+                and all((lbl.id if isinstance(lbl, Label) else self._get_or_create_label_id(lbl) not in res['labelIds'] for lbl in to_remove)), \
+                'An error occurred while modifying message label.'
+
+            self.label_ids = res['labelIds']
 
         assert all((lbl.id if isinstance(lbl, Label) else self._get_or_create_label_id(lbl) in res['labelIds'] for lbl in to_add)) \
             and all((lbl.id if isinstance(lbl, Label) else self._get_or_create_label_id(lbl) not in res['labelIds'] for lbl in to_remove)), \
