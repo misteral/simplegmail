@@ -38,6 +38,5 @@ COPY requirements-dev.txt /src
 RUN pip install -r requirements-dev.txt
 
 COPY .pylintrc /src
-COPY tests /src
 
 ENTRYPOINT ["pytest"]

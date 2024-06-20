@@ -1,5 +1,4 @@
 from gmsa import query
-
 class TestQuery(object):
 
     def test_and(self):
@@ -49,7 +48,7 @@ class TestQuery(object):
         assert query_string == expect
 
         expect = "(-is:starred (label:work label:HR))"
-        query_string = query.construct_query(exclude_starred=True, 
+        query_string = query.construct_query(exclude_starred=True,
                                              labels=['work', 'HR'])
         assert query_string == expect
 

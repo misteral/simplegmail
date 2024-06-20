@@ -22,7 +22,7 @@ from gmsa.authentication import AuthenticatedService
 from gmsa.attachment import Attachment
 from gmsa.label import Label
 from gmsa.message import Message
-
+from gmsa.utils import extract_and_format_to_header
 
 class Gmail(AuthenticatedService):
     '''
@@ -440,7 +440,7 @@ class Gmail(AuthenticatedService):
         """
 
         msg = MIMEMultipart('mixed' if attachments else 'alternative')
-        msg['To'] = to
+        msg['To'] = extract_and_format_to_header(to)
         msg['From'] = sender
         msg['Subject'] = subject
 
