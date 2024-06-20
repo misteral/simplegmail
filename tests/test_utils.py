@@ -1,5 +1,5 @@
+import pytest
 from gmsa import utils
-# from gmsa import extract_and_format_to_header
 
 class TestUtils(object):
 
@@ -10,5 +10,5 @@ class TestUtils(object):
 
     def test_extract_and_format_to_header_invalid_format(self):
         input_str = 'Anete Gludīte <john.doe@example.com>'
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             utils.extract_and_format_to_header(input_str)
