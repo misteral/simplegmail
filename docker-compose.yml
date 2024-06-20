@@ -1,7 +1,6 @@
 ---
 services:
   gmsa:
-    image: ghcr.io/mafrosis/gmsa:dev
     restart: unless-stopped
     build:
       context: .
@@ -9,7 +8,6 @@ services:
       - TZ=Australia/Melbourne
 
   test:
-    image: ghcr.io/mafrosis/gmsa:test
     build:
       context: .
       dockerfile: Dockerfile.test
