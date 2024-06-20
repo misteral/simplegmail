@@ -440,11 +440,7 @@ class Gmail(AuthenticatedService):
         """
 
         msg = MIMEMultipart('mixed' if attachments else 'alternative')
-        if isinstance(to,str.basestring):
-            to = to.encode('utf8')
-        else:
-            to = re.UNICODE(to).encode('utf8')
-        msg['To'] = email.utils.formataddr(('Recipient', to), charset='utf-8')
+        msg['To'] = email.utils.formataddr(('Recipient', to.encode('ascii', 'ignore')), charset='utf-8')
         msg['From'] = email.utils.formataddr(('Sender', sender), charset='utf-8')
         msg['Subject'] = subject
 
