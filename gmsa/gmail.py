@@ -209,8 +209,8 @@ class Gmail(AuthenticatedService):
         if not parallel:
             return [self._build_message_from_ref(user_id, ref, attachments) for ref in message_refs]
 
-        max_num_threads = 12  # empirically chosen, prevents throttling
-        target_msgs_per_thread = 10  # empirically chosen
+        max_num_threads = 24  # empirically chosen, prevents throttling
+        target_msgs_per_thread = 20  # empirically chosen
         num_threads = min(
             math.ceil(len(message_refs) / target_msgs_per_thread),
             max_num_threads
