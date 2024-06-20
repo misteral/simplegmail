@@ -638,8 +638,13 @@ class Gmail(AuthenticatedService):
             in_reply_to=message.id, references=references
         )
 
-        req = self.service.users().messages().send(userId='me', body=msg)
-        res = req.execute()
+        try:
+            req = self.service.users().messages().send(userId='me', body=msg)
+            res = req.execute()
+        except Exception as e:
+            print(f"Error: {e}")
+            print(f"Message: {msg}")
+            raise
 
         return self._build_message_from_ref(user_id, res, 'reference')
 
