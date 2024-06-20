@@ -644,7 +644,7 @@ class Gmail(AuthenticatedService):
             res = req.execute()
         except Exception as e:
             print(f"Error: {e}")
-            print(f"Message: {message}")
+            print(f"Message: {message.recipient}")
             raise
 
         return self._build_message_from_ref(user_id, res, 'reference')
