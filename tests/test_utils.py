@@ -3,11 +3,6 @@ from gmsa import utils
 
 class TestUtils(object):
 
-import pytest
-from gmsa import utils
-
-class TestUtils(object):
-
     def test_extract_and_format_to_header_with_utf8(self):
         input_str = 'Anete Gludīte <anete@example.com>'
         expected_output = '=?utf-8?q?Anete_Glud=C4=ABte?= <anete@example.com>'
