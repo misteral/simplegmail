@@ -445,10 +445,10 @@ class Gmail(AuthenticatedService):
         msg['Subject'] = subject
 
         if cc:
-            msg['Cc'] = ', '.join([email.utils.formataddr(('Recipient', addr)) for addr in cc])
+            msg['Cc'] = ', '.join([email.utils.formataddr(('Recipient', addr), charset='utf-8') for addr in cc])
 
         if bcc:
-            msg['Bcc'] = ', '.join([email.utils.formataddr(('Recipient', addr)) for addr in bcc])
+            msg['Bcc'] = ', '.join([email.utils.formataddr(('Recipient', addr), charset='utf-8') for addr in bcc])
         if thread_id:
             msg['threadId'] = thread_id
             msg['Thread-Id'] = thread_id
