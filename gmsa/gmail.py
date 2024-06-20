@@ -216,7 +216,7 @@ class Gmail(AuthenticatedService):
             max_num_threads
         )
         batch_size = math.ceil(len(message_refs) / num_threads)
-        message_lists = [None] * num_threads
+        message_lists = [[] for _ in range(num_threads)]
 
         def thread_download_batch(thread_num):
             gmail = Gmail(credentials=self.credentials)
