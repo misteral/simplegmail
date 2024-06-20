@@ -7,6 +7,7 @@ from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import html
+import email.utils
 import math
 import mimetypes
 import os
@@ -439,15 +440,15 @@ class Gmail(AuthenticatedService):
         """
 
         msg = MIMEMultipart('mixed' if attachments else 'alternative')
-        msg['To'] = to
+        msg['To'] = email.utils.formataddr(('Recipient', to))
         msg['From'] = sender
         msg['Subject'] = subject
 
         if cc:
-            msg['Cc'] = ', '.join(cc)
+            msg['Cc'] = ', '.join([email.utils.formataddr(('Recipient', addr)) for addr in cc])
 
         if bcc:
-            msg['Bcc'] = ', '.join(bcc)
+            msg['Bcc'] = ', '.join([email.utils.formataddr(('Recipient', addr)) for addr in bcc])
         if thread_id:
             msg['threadId'] = thread_id
             msg['Thread-Id'] = thread_id
